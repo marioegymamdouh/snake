@@ -23,7 +23,12 @@
 .cell.snake {
     background-color: chocolate;
 }
-
+.cell.snake.tail {
+    background-color: #dba890;
+}
+.cell.snake.head {
+    background-color: #7e3500;
+}
 .cell.food {
     background-color: blue;
 }
