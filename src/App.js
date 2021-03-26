@@ -3,8 +3,8 @@ import './App.css';
 
 
 const App = () => {
-    const environmentSize = 10;
-    const firstSize = 5;
+    const environmentSize = 20;
+    const firstSize = 10;
     const [environment, setEnvironment] = useState(() => {
         const firstEnvironment = new Array(environmentSize).fill(0).map(()=> [...new Array(environmentSize).fill(0)]);
         for (let i = 0; i < firstSize; i++) firstEnvironment[0][i] = 1;
@@ -25,7 +25,7 @@ const App = () => {
         window.addEventListener('keydown', (e) => setKeyClicked(e));
     },[]);
     useEffect(() => {
-        if (intervalState === false) {
+        if (intervalState === false && isAlive) {
             const speed = (1/snake.body.length) * 1600;
             const interval = setInterval(() => {
                 setTime(new Date());
@@ -111,7 +111,6 @@ const App = () => {
         ];
         const foodInSnake = snake.body.find(item => item[0] === newCoordinates[0] && item[1] === newCoordinates[1])
         if (!(foodInSnake === undefined)) newCoordinates = getRandomCoordinates();
-        console.log(newCoordinates);
         return newCoordinates
     };
     const styles = {
