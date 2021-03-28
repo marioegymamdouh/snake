@@ -1,9 +1,10 @@
 import React, {useState, useEffect} from "react";
 import './App.css';
+import Cell from "./Cell";
 
 
 const App = () => {
-    const environmentSize = 20;
+    const environmentSize = 30;
     const firstSize = 15;
     const firstFood = Math.floor( Math.random() * ( ( environmentSize * environmentSize ) - firstSize ) + firstSize );
     const directions = [37,38,39,40];
@@ -112,17 +113,18 @@ const App = () => {
         gridTemplateRows: `repeat(${environmentSize}, 1fr)`,
     }
 
+    const body = environment.map((cell, index) => <Cell
+        index={index}
+        cell={cell}
+        tail={index === snake[0]}
+        head={index === snake[snake.length - 1]}
+        key={index}
+    />)
+
     return (
         <div className='container'>
             <div className='outerSpace' style={styles}>
-                {environment && environment.map((cell, index) => {
-                    const classes = ['cell'];
-                    if (cell === 1) classes.push('snake');
-                    if (cell === 9) classes.push('food');
-                    if (index === snake[0]) classes.push('tail')
-                    if (index === snake[snake.length - 1]) classes.push('head')
-                    return <div key={index} className={classes.join(' ')}/>
-                })}
+                {environment && body}
             </div>
             { !isAlive && <h2>You died noob</h2> }
             { <h3>score {snake.length - firstSize}</h3> }
