@@ -19,17 +19,16 @@
     background-color: antiquewhite;
     will-change: background-color;
 }
-
-.cell.snake {
+.outerSpace .cell.snake {
     background-color: chocolate;
 }
-.cell.snake.tail {
+.outerSpace .cell.snake.tail {
     background-color: #dba890;
 }
-.cell.snake.head {
+.outerSpace .cell.snake.head {
     background-color: #7e3500;
 }
-.cell.food {
+.outerSpace .cell.food {
     background-color: blue;
 }
 h2 {

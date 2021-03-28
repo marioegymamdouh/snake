@@ -2,12 +2,23 @@ import React, {useState, useEffect} from "react";
 import './App.css';
 import Cell from "./Cell";
 
-
+const environmentSize = 100;
+const firstSize = 50;
+const firstFood = Math.floor( Math.random() * ( ( environmentSize * environmentSize ) - firstSize ) + firstSize );
+const body = new Array(environmentSize * environmentSize).fill(0).map((item, index) =>
+        <Cell
+            cell={index < firstSize ? 1 : 0}
+            key={index}
+            head={index === (firstSize - 1)}
+            tail={index === 0}
+        />
+    )
 const App = () => {
-    const environmentSize = 30;
-    const firstSize = 15;
-    const firstFood = Math.floor( Math.random() * ( ( environmentSize * environmentSize ) - firstSize ) + firstSize );
     const directions = [37,38,39,40];
+    const [food, setFood] = useState({
+        old: false,
+        new: firstFood
+    });
     const [environment, setEnvironment] = useState(() => {
         const firstEnvironment = new Array(environmentSize * environmentSize).fill(0);
         for (let i = 0; i < firstSize; i++) firstEnvironment[i] = 1;
@@ -16,6 +27,7 @@ const App = () => {
     });
     const [snake, setSnake] = useState(Array.from(Array(firstSize).keys()));
     const [direction, setDirection] = useState(39);
+    const [oldTail, setOldTail] = useState();
     const [clickEvent, setClickEvent] = useState(false);
     const [intervalState, setIntervalState] = useState(false);
     const [isAlive, setIsAlive] = useState(true)
@@ -45,6 +57,16 @@ const App = () => {
     useEffect(() => {
         time && move(direction);
     }, [time])
+    useEffect(() => {
+        body[food.new] = <Cell
+            cell={9}
+            key={food.new}
+        />;
+        if (food.old) body[food.old] = <Cell
+            cell={0}
+            key={food.new}
+        />;
+    }, [food])
 
     const move = (direction) => {
         isAlive && setSnake(oldSnake => {
@@ -74,10 +96,16 @@ const App = () => {
                 const newEnv = [...oldEnv]
                 const head = newSnake[newSnake.length - 1];
 
-                if (newEnv[head] === 9) newEnv[getRandomCoordinates()] = 9;
-                else {
+                if (newEnv[head] === 9) {
+                    const newFood = getRandomCoordinates()
+                    newEnv[newFood] = 9;
+                    setFood(oldState => ({
+                        new: newFood,
+                        old: oldState.new
+                    }))
+                } else {
                     newEnv[oldSnake[0]] = 0;
-                    newSnake.shift();
+                    setOldTail(newSnake.shift());
                 }
 
                 if (newEnv[head] === 1 && (head !== oldSnake[0])) {
@@ -113,13 +141,26 @@ const App = () => {
         gridTemplateRows: `repeat(${environmentSize}, 1fr)`,
     }
 
-    const body = environment.map((cell, index) => <Cell
-        index={index}
-        cell={cell}
-        tail={index === snake[0]}
-        head={index === snake[snake.length - 1]}
-        key={index}
-    />)
+
+    if (oldTail || oldTail === 0) body[oldTail] = <Cell
+        cell={0}
+        key={oldTail}
+    />;
+    body[snake[0]] = <Cell
+        cell={1}
+        key={snake[0]}
+        tail={true}
+    />;
+    body[snake[snake.length - 1]] = <Cell
+        cell={1}
+        key={snake[snake.length - 1]}
+        head={true}
+    />;
+    body[snake[snake.length - 2]] = <Cell
+        cell={1}
+        key={snake[snake.length - 2]}
+        head={false}
+    />;
 
     return (
         <div className='container'>
